@@ -651,7 +651,11 @@ angular.module('ngResource', ['ng']).
 
           // strip trailing slashes and set the url (unless this behavior is specifically disabled)
           if (self.defaults.stripTrailingSlashes) {
-            url = url.replace(/\/+$/, '') || '/';
+            var i = url.length - 1;
+            while (i >= 0 && url[i] == ('/')) {
+               i--;
+            }
+            url = url.slice(0,i + 1) || '/';
           }
 
           // Collapse `/.` if found in the last URL path segment before the query.
