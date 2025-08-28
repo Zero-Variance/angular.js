@@ -73,17 +73,18 @@ function currencyFilter($locale) {
       return amount;
     }
 
-    const formattedNumber = formatNumber(amount, formats.PATTERNS[1], formats.GROUP_SEP, formats.DECIMAL_SEP, fractionSize);
+    var formattedNumber = formatNumber(amount, formats.PATTERNS[1], formats.GROUP_SEP, formats.DECIMAL_SEP, fractionSize);
     // Validate if currency symbol whitespace trimming is required by checking for the currency symbol first. Fixes potential ReDoS vulnerability - https://www.cve.org/CVERecord?id=CVE-2022-25844
-    if(!formattedNumber.includes("\u00A4")) return formattedNumber;
+    if(formattedNumber.indexOf("\u00A4") === -1) return formattedNumber;
     if(currencySymbol) return formattedNumber.replace(/\u00A4/g,currencySymbol);
     /* here we know we have u00A4 so at least 2 splitted part and currency symbol is empty*/
-    let splitted = formattedNumber.split("\u00A4");
-    const splittedend = splitted.length - 1;
-    splitted[0] = splitted[0].trimEnd();
-    splitted[splittedend] = splitted[splittedend].trimStart();
+    var splitted = formattedNumber.split("\u00A4");
+    var splittedend = splitted.length - 1;
+    // Replace .trimEnd() and .trimStart() with ES5-compatible regex
+    splitted[0] = splitted[0].replace(/\s+$/, '');
+    splitted[splittedend] = splitted[splittedend].replace(/^\s+/, '');
     if(splittedend > 1) {
-       for(let i=1;i < splittedend; i++) splitted[i] = splitted[i].trim();
+       for(var i=1;i < splittedend; i++) splitted[i] = splitted[i].replace(/^\s+|\s+$/g, '');
     }
     return splitted.join('');
   };

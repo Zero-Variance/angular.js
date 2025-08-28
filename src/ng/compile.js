@@ -2086,13 +2086,14 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
         throw $compileMinErr('srcset', 'Can\'t pass trusted values to `{0}`: "{1}"', invokeType, value.toString());
       }
 
-      var srcSetValues = value.split(',')
+      var srcSetValues = value.split(',');
       var sanitisedSrcSet = [];
-      for (const srcSetValue of srcSetValues) {
-        const wellTrimmedSrcSetValue = srcSetValue.trim().replace(/\s{2,}/, ' ');
-        const srcSplit = wellTrimmedSrcSetValue.split(' ');
-        const uri = $sce.getTrustedMediaUrl(srcSplit[0]);
-        sanitisedSrcSet.push(`${uri}${srcSplit[1] !== undefined ? " " + srcSplit[1] : ""}`)
+      for (var i = 0; i < srcSetValues.length; i++) {
+        var srcSetValue = srcSetValues[i];
+        var wellTrimmedSrcSetValue = srcSetValue.trim().replace(/\s{2,}/, ' ');
+        var srcSplit = wellTrimmedSrcSetValue.split(' ');
+        var uri = $sce.getTrustedMediaUrl(srcSplit[0]);
+        sanitisedSrcSet.push(uri + (typeof srcSplit[1] !== 'undefined' ? " " + srcSplit[1] : ""));
       }
 
       return sanitisedSrcSet.join(',');
